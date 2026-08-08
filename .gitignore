@@ -5,6 +5,8 @@ node_modules
 # Production builds
 dist
 **/dist
+coverage
+**/coverage
 
 # Environment variables & secrets
 .env
