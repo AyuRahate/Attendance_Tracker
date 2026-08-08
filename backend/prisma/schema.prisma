@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  name         String   @default("")
+  createdAt    DateTime @default(now())
+
+  settings         AttendanceSettings?
+  subjects         Subject[]
+  timetableSlots   TimetableSlot[]
+  lectureRecords   LectureRecord[]
+}
+
+model AttendanceSettings {
+  id                   Int      @id @default(autoincrement())
+  userId               Int      @unique
+  mode                 String   @default("per_subject")
+  defaultTargetPercent Float    @default(75.0)
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Subject {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  name          String
+  color         String   @default("#6366f1")
+  targetPercent Float?
+  createdAt     DateTime @default(now())
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timetableSlots TimetableSlot[]
+  lectureRecords LectureRecord[]
+}
+
+model TimetableSlot {
+  id         Int    @id @default(autoincrement())
+  userId     Int
+  subjectId  Int
+  dayOfWeek  Int
+  startTime  String
+  endTime    String
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject        Subject         @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  lectureRecords LectureRecord[]
+}
+
+model LectureRecord {
+  id               Int      @id @default(autoincrement())
+  userId           Int
+  subjectId        Int
+  timetableSlotId  Int?
+  date             String
+  status           String   @default("missed")
+  createdAt        DateTime @default(now())
+
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject        Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  timetableSlot  TimetableSlot? @relation(fields: [timetableSlotId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, timetableSlotId, date])
+}
