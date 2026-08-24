@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "postinstall": "prisma generate && prisma db push",
     "test": "jest --coverage"
   },
   "dependencies": {

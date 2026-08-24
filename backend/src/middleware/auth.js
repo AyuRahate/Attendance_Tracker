@@ -14,7 +14,8 @@ function authMiddleware(req, res, next) {
   const token = authHeader.slice(7);
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const JWT_SECRET = process.env.JWT_SECRET || 'attendance_smart_super_secret_jwt_key_2026';
+    const payload = jwt.verify(token, JWT_SECRET);
     req.user = payload; // { id, email }
     next();
   } catch (err) {
