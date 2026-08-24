@@ -6,18 +6,14 @@ import { useTheme } from '../context/ThemeContext';
 export default function Navbar() {
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const [selectedSem, setSelectedSem] = useState('Sem 5 · 2026');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : 'A';
   const isDark = theme === 'dark';
 
-  const closeMenu = () => setMobileMenuOpen(false);
-
   return (
     <header className="navbar-header">
       <div className="navbar-container">
-        {/* Brand & Term Dropdown */}
+        {/* Brand */}
         <div className="navbar-brand-group">
           <div className="brand-logo">
             <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
@@ -37,27 +33,12 @@ export default function Navbar() {
             </svg>
             <span className="brand-title">AttendAI</span>
           </div>
-
-          <div className="sem-selector desktop-only">
-            <select
-              value={selectedSem}
-              onChange={(e) => setSelectedSem(e.target.value)}
-              className="sem-select"
-            >
-              <option value="Sem 5 · 2026">Sem 5 · 2026</option>
-              <option value="Sem 4 · 2025">Sem 4 · 2025</option>
-              <option value="Sem 3 · 2025">Sem 3 · 2025</option>
-            </select>
-          </div>
         </div>
 
         {/* Center Nav Links (Desktop) */}
         <nav className="navbar-links desktop-only">
           <NavLink to="/today" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
             Today
-          </NavLink>
-          <NavLink to="/subjects" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-            Subjects
           </NavLink>
           <NavLink to="/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
             Analytics
@@ -93,40 +74,11 @@ export default function Navbar() {
             )}
           </button>
 
-          <NavLink to="/settings" className="user-avatar-btn desktop-only" title="Settings">
+          <NavLink to="/settings" className="user-avatar-btn" title="Settings">
             <div className="user-avatar">{userInitial}</div>
           </NavLink>
-
-          {/* Mobile Hamburger Menu Button */}
-          <button
-            className="mobile-menu-btn mobile-only"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle Navigation Menu"
-          >
-            {mobileMenuOpen ? '✕' : '☰'}
-          </button>
         </div>
       </div>
-
-      {/* Mobile Navigation Dropdown */}
-      {mobileMenuOpen && (
-        <div className="mobile-nav-dropdown animate-fadeInDown">
-          <nav className="mobile-nav-links">
-            <NavLink to="/today" onClick={closeMenu} className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}>
-              📅 Today
-            </NavLink>
-            <NavLink to="/subjects" onClick={closeMenu} className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}>
-              📚 Subjects
-            </NavLink>
-            <NavLink to="/dashboard" onClick={closeMenu} className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}>
-              📊 Analytics
-            </NavLink>
-            <NavLink to="/settings" onClick={closeMenu} className={({ isActive }) => `mobile-nav-link ${isActive ? 'active' : ''}`}>
-              ⚙️ Settings
-            </NavLink>
-          </nav>
-        </div>
-      )}
     </header>
   );
 }

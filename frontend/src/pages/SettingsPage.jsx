@@ -3,7 +3,6 @@ import { settingsApi, subjectsApi } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useTheme } from '../context/ThemeContext';
-import TimetableManager from '../components/TimetableManager';
 
 const SUBJECT_COLORS = [
   '#6366f1', '#8b5cf6', '#ec4899', '#f43f5e',
@@ -128,7 +127,7 @@ export default function SettingsPage() {
       <div className="page-content animate-fadeIn">
         <div className="page-header">
           <h1 className="page-title">Settings</h1>
-          <p className="page-subtitle">Configure attendance rules & manage subjects</p>
+          <p className="page-subtitle">Manage your account, appearance, and attendance preferences</p>
         </div>
 
         {/* User Info Card */}
@@ -144,7 +143,7 @@ export default function SettingsPage() {
 
         {/* Appearance / Theme Toggle */}
         <div className="card mb-6 animate-fadeInUp">
-          <p className="font-semibold text-lg mb-3">Appearance</p>
+          <p className="font-semibold text-md mb-3">Appearance</p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             {[
               {
@@ -192,11 +191,11 @@ export default function SettingsPage() {
 
         {/* Mode Toggle Settings */}
         <div className="card mb-6 animate-fadeInUp">
-          <p className="font-semibold text-lg mb-3">Attendance Criteria</p>
+          <p className="font-semibold text-md mb-3">Attendance Criteria</p>
           <div className="flex flex-col gap-3">
             {[
-              { value: 'per_subject', label: 'Per Subject Mode', desc: 'Calculates bunk room and target per subject separately' },
-              { value: 'overall', label: 'Overall Combined Mode', desc: 'Aggregates all attendance into one single combined percentage' },
+              { value: 'per_subject', label: 'Per Subject', desc: 'Track attendance separately for each subject' },
+              { value: 'overall', label: 'Overall Combined', desc: 'Combine all attendance into a single percentage' },
             ].map((opt) => (
               <div
                 key={opt.value}
@@ -241,17 +240,17 @@ export default function SettingsPage() {
 
         {/* Subjects List & Manage */}
         <div className="card mb-6 animate-fadeInUp">
-          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <div>
-              <p className="font-semibold text-lg">Subjects ({subjects.length})</p>
+              <p className="font-semibold text-md">Subjects ({subjects.length})</p>
               {new Set(subjects.map((s) => s.name.trim().toLowerCase())).size < subjects.length && (
-                <p className="text-xs text-danger mt-0.5">⚠️ Duplicate subject entries detected</p>
+                <p className="text-xs text-danger mt-1">Duplicate subject entries detected</p>
               )}
             </div>
             <div className="flex gap-2">
               {new Set(subjects.map((s) => s.name.trim().toLowerCase())).size < subjects.length && (
                 <button className="btn btn-sm btn-primary" onClick={handleDeduplicateSubjects}>
-                  ✨ Merge Duplicates
+                  Merge Duplicates
                 </button>
               )}
               <button className="btn btn-sm btn-ghost" onClick={() => setShowAddSubject(!showAddSubject)}>
@@ -322,9 +321,6 @@ export default function SettingsPage() {
             ))}
           </div>
         </div>
-
-        {/* Timetable Manager: Preview, Edit, Add, or Upload OCR */}
-        <TimetableManager />
       </div>
     </div>
   );

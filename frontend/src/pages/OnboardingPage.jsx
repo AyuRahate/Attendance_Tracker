@@ -153,7 +153,7 @@ export default function OnboardingPage() {
     setSubmitting(true);
     try {
       await timetableApi.save({ slots, replaceAll: true });
-      toast.success('All set! Welcome to Smart Attendance 🎉');
+      toast.success('All set! Welcome to AttendAI');
       navigate('/today');
     } catch { toast.error('Failed to save timetable.'); }
     finally { setSubmitting(false); }
@@ -331,9 +331,25 @@ export default function OnboardingPage() {
             {!timetableMethod && (
               <div className="animate-fadeInUp">
                 <div className="card mb-4" style={{ textAlign: 'center', padding: '24px' }}>
-                  <div style={{ fontSize: '36px', marginBottom: '12px' }}>📸</div>
-                  <p className="font-bold text-lg mb-2">Upload Timetable Photo</p>
-                  <p className="text-sm text-secondary mb-4">Take a screenshot of your timetable and let us extract it automatically</p>
+                  <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
+                      background: 'rgba(99, 102, 241, 0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--color-primary-light)'
+                    }}>
+                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <p className="font-bold text-lg mb-2">Upload Timetable Image</p>
+                  <p className="text-sm text-secondary mb-4">Take a screenshot or photo of your schedule and extract it automatically</p>
                   <button className="btn btn-primary btn-full" onClick={() => setTimetableMethod('ocr')}>
                     Upload Screenshot
                   </button>
@@ -363,11 +379,11 @@ export default function OnboardingPage() {
                 />
                 {ocrFile && (
                   <button className="btn btn-primary btn-full" onClick={handleOcrUpload} disabled={ocrLoading}>
-                    {ocrLoading ? '🔍 Analyzing...' : '🔍 Extract Timetable'}
+                    {ocrLoading ? 'Analyzing Image...' : 'Extract Timetable'}
                   </button>
                 )}
                 <button className="btn btn-ghost btn-full mt-2" onClick={() => setTimetableMethod('manual')}>
-                  Switch to manual entry
+                  Switch to Manual Entry
                 </button>
               </div>
             )}
@@ -376,15 +392,15 @@ export default function OnboardingPage() {
             {ocrDraft && (
               <div className="animate-fadeInUp">
                 <div className="glass-card mb-4">
-                  <p className="font-semibold">Review extracted slots</p>
-                  <p className="text-sm text-secondary mt-1">Map each slot to one of your subjects. Flagged slots (⚠️) had low confidence.</p>
+                  <p className="font-semibold">Review Extracted Slots</p>
+                  <p className="text-sm text-secondary mt-1">Map each slot to one of your subjects.</p>
                 </div>
                 <div className="flex flex-col gap-3">
                   {ocrDraft.map((slot, i) => (
                     <div key={i} className="card" style={{ borderColor: slot.flagged ? 'rgba(245,158,11,0.4)' : undefined }}>
                       <div className="flex items-center justify-between mb-3">
                         <div>
-                          <p className="font-semibold">{slot.flagged ? '⚠️ ' : ''}{slot.subject_name}</p>
+                          <p className="font-semibold">{slot.subject_name}</p>
                           <p className="text-xs text-muted">{DAYS[slot.day_of_week]} · {slot.start_time} – {slot.end_time}</p>
                         </div>
                         <span className="text-xs text-muted">{Math.round(slot.confidence * 100)}%</span>
@@ -494,21 +510,21 @@ export default function OnboardingPage() {
 
             {(timetableMethod === 'manual' && !ocrDraft) && (
               <div className="flex gap-3 mt-2">
-                <button className="btn btn-ghost" onClick={() => setStep(1)}>← Back</button>
+                <button className="btn btn-ghost" onClick={() => setStep(1)}>Back</button>
                 <button
                   className="btn btn-primary"
                   style={{ flex: 1 }}
                   onClick={saveTimetableAndFinish}
                   disabled={submitting}
                 >
-                  {submitting ? 'Saving...' : slots.length === 0 ? 'Skip for Now →' : `Save & Start →`}
+                  {submitting ? 'Saving...' : slots.length === 0 ? 'Skip for Now' : 'Save & Finish'}
                 </button>
               </div>
             )}
 
             {!timetableMethod && (
               <button className="btn btn-ghost btn-full" onClick={() => navigate('/today')}>
-                Skip for now — I'll add it later
+                Skip for Now
               </button>
             )}
           </div>

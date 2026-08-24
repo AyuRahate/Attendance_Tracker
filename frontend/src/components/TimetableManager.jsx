@@ -4,26 +4,39 @@ import { useToast } from '../context/ToastContext';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-export default function TimetableManager({ onUpdate }) {
+export default function TimetableManager({ onUpdate, initialDay = 0 }) {
   const [slots, setSlots] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeDay, setActiveDay] = useState(0);
+  const [activeDay, setActiveDay] = useState(initialDay);
+
+  useEffect(() => {
+    if (initialDay !== undefined && initialDay !== null) {
+      setActiveDay(initialDay);
+    }
+  }, [initialDay]);
 
   // Add slot form
   const [showAddForm, setShowAddForm] = useState(false);
   const [newSlot, setNewSlot] = useState({
     subject_id: '',
-    day_of_week: 0,
+    day_of_week: initialDay || 0,
     start_time: '09:00',
     end_time: '10:00',
   });
+
+  useEffect(() => {
+    setNewSlot((prev) => ({ ...prev, day_of_week: activeDay }));
+  }, [activeDay]);
 
   // OCR Upload state
   const [showOcr, setShowOcr] = useState(false);
   const [ocrFile, setOcrFile] = useState(null);
   const [ocrLoading, setOcrLoading] = useState(false);
   const [ocrDraft, setOcrDraft] = useState(null);
+
+  // Collapse / Hide State
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toast = useToast();
 
@@ -154,22 +167,58 @@ export default function TimetableManager({ onUpdate }) {
 
   return (
     <div className="card mb-6 animate-fadeInUp">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <p className="font-bold text-lg">Weekly Timetable ({slots.length} slots)</p>
-          <p className="text-xs text-muted mt-1">Preview, edit, or upload screenshot anytime</p>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div
+          className="flex items-center gap-2 select-none"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          style={{ cursor: 'pointer' }}
+          title={isCollapsed ? 'Click to show timetable' : 'Click to hide timetable'}
+        >
+          <div>
+            <div className="flex items-center gap-2">
+              <p className="font-bold text-lg">Schedule Editor</p>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transform: isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.2s ease',
+                  fontSize: '12px',
+                  color: 'var(--text-muted)',
+                }}
+              >
+                ▼
+              </span>
+            </div>
+            <p className="text-xs text-muted mt-1">{slots.length} slot{slots.length !== 1 ? 's' : ''} configured across all days</p>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button className="btn btn-sm btn-ghost" onClick={() => { setShowOcr(!showOcr); setShowAddForm(false); }}>
-            {showOcr ? 'Cancel' : '📸 Upload Photo'}
-          </button>
-          <button className="btn btn-sm btn-ghost" onClick={() => { setShowAddForm(!showAddForm); setShowOcr(false); }}>
-            {showAddForm ? 'Cancel' : '+ Add Slot'}
+
+        <div className="flex items-center gap-2">
+          {!isCollapsed && (
+            <>
+              <button className="btn btn-sm btn-ghost" onClick={() => { setShowOcr(!showOcr); setShowAddForm(false); }}>
+                {showOcr ? 'Cancel' : 'Upload Photo'}
+              </button>
+              <button className="btn btn-sm btn-ghost" onClick={() => { setShowAddForm(!showAddForm); setShowOcr(false); }}>
+                {showAddForm ? 'Cancel' : '+ Add Slot'}
+              </button>
+            </>
+          )}
+          <button
+            className="btn btn-sm btn-ghost"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            title={isCollapsed ? 'Expand Timetable' : 'Hide Timetable'}
+          >
+            {isCollapsed ? '▼ Show' : '▲ Hide'}
           </button>
         </div>
       </div>
 
-      {/* OCR Uploader inside Manager */}
+      {!isCollapsed && (
+        <div className="animate-fadeIn">
+          {/* OCR Uploader inside Manager */}
       {showOcr && !ocrDraft && (
         <div className="glass-card mb-4 p-4 animate-fadeIn">
           <p className="font-semibold text-sm mb-2">Upload Timetable Image / Screenshot</p>
@@ -181,7 +230,7 @@ export default function TimetableManager({ onUpdate }) {
           />
           {ocrFile && (
             <button className="btn btn-primary btn-sm btn-full" onClick={handleOcrUpload} disabled={ocrLoading}>
-              {ocrLoading ? '🔍 Extracting Text...' : '🔍 Extract & Import Slots'}
+              {ocrLoading ? 'Extracting...' : 'Extract & Import Slots'}
             </button>
           )}
         </div>
@@ -340,5 +389,7 @@ export default function TimetableManager({ onUpdate }) {
         )}
       </div>
     </div>
-  );
+  )}
+</div>
+);
 }

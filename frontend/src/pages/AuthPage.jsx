@@ -36,10 +36,26 @@ export default function AuthPage() {
       <div className="auth-card">
         {/* Logo */}
         <div className="auth-logo">
-          <div style={{ fontSize: '40px', marginBottom: '8px' }}>📅</div>
-          <h1 className="text-xl font-extrabold gradient-text">Smart Attendance</h1>
+          <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>
+            <svg width="44" height="44" viewBox="0 0 32 32" fill="none">
+              <path
+                d="M16 2L28 8.9282V23.0718L16 30L4 23.0718V8.9282L16 2Z"
+                fill="url(#auth-logo-grad)"
+                stroke="#818cf8"
+                strokeWidth="1.5"
+              />
+              <circle cx="16" cy="16" r="5" fill="#ffffff" />
+              <defs>
+                <linearGradient id="auth-logo-grad" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#6366f1" />
+                  <stop offset="1" stopColor="#4338ca" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <h1 className="text-xl font-extrabold gradient-text">AttendAI</h1>
           <p className="text-sm text-secondary mt-2">
-            Never worry about attendance again.
+            Track attendance. Know when you can skip. Never stress about percentages.
           </p>
         </div>
 
@@ -115,13 +131,16 @@ export default function AuthPage() {
             style={{ marginTop: '8px' }}
             disabled={loading}
           >
-            {loading ? '...' : mode === 'login' ? 'Sign In →' : 'Create Account →'}
+            {loading
+              ? mode === 'login' ? 'Signing in...' : 'Creating account...'
+              : mode === 'login' ? 'Sign In' : 'Create Account'
+            }
           </button>
         </form>
 
         {/* Info blurb */}
-        <p className="text-muted text-xs text-center mt-6" style={{ lineHeight: 1.5 }}>
-          Track attendance, know when you can bunk,<br />never stress about percentages again.
+        <p className="text-muted text-xs text-center mt-6" style={{ lineHeight: 1.6 }}>
+          Your personal attendance tracker &mdash; log lectures,<br />monitor progress, and plan your schedule.
         </p>
       </div>
     </div>
